@@ -1,3 +1,4 @@
+import mutationType from '../enum/mutationType';
 import ObjectiveFnInterface from '../interfaces/ObjectiveFunction';
 
 export default class Individual {
@@ -9,6 +10,8 @@ export default class Individual {
     private static _minPosition: number[];
     private static _maxPosition: number[];
     private static _decimalPrecision: number;
+    private static _mutationType: mutationType;
+    private static _mutationRate: number;
 
     constructor(dimensions: number, individualLength: number) {
         this._binaryPosition = new Array(dimensions).fill(undefined);
@@ -42,6 +45,25 @@ export default class Individual {
         return decimal.map((coordinate, index) => this.normalizeDecimalCoordinate(coordinate, index, binaryLength));
     }
 
+    private geneMutation(mutationRate: number): number[][] {
+        const mutationRatePercentage = mutationRate / 100;
+        return this._binaryPosition.map((coordinate) => coordinate.map((gene) => {
+            if (Math.random() < mutationRatePercentage) return (gene === 0 ? 1 : 0);
+            return gene;
+        }));
+    }
+
+    private individualMutation(mutationRate: number): number[][] {
+        const mutationRatePercentage = mutationRate / 100;
+        if (Math.random() < mutationRatePercentage) {
+            const coordinate = Math.floor(Math.random() * this._binaryPosition.length);
+            const gene = Math.floor(Math.random() * this._binaryPosition[coordinate].length);
+            this._binaryPosition[coordinate][gene] = this._binaryPosition[coordinate][gene] === 0 ? 1 : 0;
+            return this._binaryPosition;
+        }
+        return this._binaryPosition;
+    }
+
     public updateIndividual(binaryParent1: number[][], binaryParent2: number[][], crossoverPoint: number, index: number): void {
         let coordPrefix;
         let coordSuffix;
@@ -56,6 +78,9 @@ export default class Individual {
             this._binaryPosition[j] = coordPrefix.concat(coordSuffix);
         });
 
+        if (Individual._mutationType === mutationType.perGene) this._binaryPosition = this.geneMutation(Individual._mutationRate);
+        else this._binaryPosition = this.individualMutation(Individual._mutationRate);
+
         this._position = this.normalize(this._binaryPosition);
         this._objectiveValue = Individual._objectiveFunction.objectiveFunction(...this._position);
     }
@@ -68,10 +93,19 @@ export default class Individual {
         return this._objectiveValue;
     }
 
-    public static setGroupParams(objectiveFn: ObjectiveFnInterface, minPosition: number[], maxPosition: number[], decimalPrecision: number) {
+    public static setGroupParams(
+        objectiveFn: ObjectiveFnInterface,
+        minPosition: number[],
+        maxPosition: number[],
+        decimalPrecision: number,
+        mutationType: mutationType,
+        mutationRate: number
+    ) {
         Individual._objectiveFunction = objectiveFn;
         Individual._minPosition = minPosition;
         Individual._maxPosition = maxPosition;
         Individual._decimalPrecision = decimalPrecision;
+        Individual._mutationType = mutationType;
+        Individual._mutationRate = mutationRate;
     }
 }
