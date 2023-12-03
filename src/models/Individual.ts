@@ -89,6 +89,10 @@ export default class Individual {
         return this._binaryPosition;
     }
 
+    public get position() {
+        return this._position;
+    }
+
     public get objectiveValue() {
         return this._objectiveValue;
     }
