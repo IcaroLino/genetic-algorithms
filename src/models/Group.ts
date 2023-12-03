@@ -1,3 +1,5 @@
+import mutationType from '../enum/mutationType';
+import ObjectiveFnInterface from '../interfaces/ObjectiveFunction';
 import Individual from './Individual';
 
 export default class Group {
@@ -6,7 +8,23 @@ export default class Group {
     private _groupLog: string[][] = [];
     private _metrics: { highestValue: number; average: number, position: number[] }[] = [];
 
+    private static _objectiveFunction: ObjectiveFnInterface;
+    private static _minPosition: number[];
+    private static _maxPosition: number[];
+    private static _decimalPrecision: number;
+    private static _mutationType: mutationType;
+    private static _mutationRate: number;
+
     constructor(groupLength: number, dimensions: number, individualLength: number, generations: number) {
+        Individual.setGroupParams(
+            Group._objectiveFunction,
+            Group._minPosition,
+            Group._maxPosition,
+            Group._decimalPrecision,
+            Group._mutationType,
+            Group._mutationRate
+        );
+
         this._group = new Array(groupLength).fill(undefined).map(() => new Individual(dimensions, individualLength));
         this._groupLog.push(this._group.map((individual) => JSON.stringify(individual)));
         this._metrics.push(this.getMetrics());
@@ -85,5 +103,21 @@ export default class Group {
                 + `(Highest Value) ${history.highestValue.toFixed(decimalPrecision)} | `
                 + `(Average): ${history.average.toFixed(decimalPrecision)}`);
         });
+    }
+
+    public static setGroupParams(
+        objectiveFn: ObjectiveFnInterface,
+        minPosition: number[],
+        maxPosition: number[],
+        decimalPrecision: number,
+        mutationType: mutationType,
+        mutationRate: number
+    ) {
+        Group._objectiveFunction = objectiveFn;
+        Group._minPosition = minPosition;
+        Group._maxPosition = maxPosition;
+        Group._decimalPrecision = decimalPrecision;
+        Group._mutationType = mutationType;
+        Group._mutationRate = mutationRate;
     }
 }
