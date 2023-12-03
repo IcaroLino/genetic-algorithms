@@ -45,6 +45,19 @@ module.exports = {
         'semi': [
             'error',
             'always'
+        ],
+        'no-trailing-spaces': 'error',
+        'max-len': [
+            'error',
+            150,
+        ],
+        'eol-last': [
+            'error',
+            'always'
+        ],
+        'arrow-parens': [
+            'error',
+            'always'
         ]
     }
 };
