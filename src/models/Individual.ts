@@ -97,7 +97,7 @@ export default class Individual {
         return this._objectiveValue;
     }
 
-    public static setGroupParams(
+    public static setPopulationParams(
         objectiveFn: ObjectiveFnInterface,
         minPosition: number[],
         maxPosition: number[],

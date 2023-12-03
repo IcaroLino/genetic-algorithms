@@ -1,5 +1,5 @@
 import mutationType from './enum/mutationType';
-import Group from './models/Group';
+import Population from './models/Population';
 import objectiveFn from './objective/ObjectiveFn';
 import * as fs from 'fs';
 
@@ -10,18 +10,18 @@ const decimalPrecision = 2;
 const mttType = mutationType.perINDIVIDUAL;
 const mutationRate = 5;
 
-Group.setGroupParams(objFn, min, max, decimalPrecision, mttType, mutationRate);
+Population.setPopulationParams(objFn, min, max, decimalPrecision, mttType, mutationRate);
 
-const groupLength = 30;
+const populationLength = 30;
 const dimensions = min.length;
 const individualLength = 18;
-const generations = 60;
+const generations = 100;
 
-const ag = new Group(groupLength, dimensions, individualLength, generations);
+const ag = new Population(populationLength, dimensions, individualLength, generations);
 ag.printMetricsHistory(decimalPrecision);
 
 try {
-    fs.writeFile('group.txt', ag.getGroupLog, (err) => {
+    fs.writeFile('population.txt', ag.getGroupLog, (err) => {
         if (err) throw new Error('File writing Erro:', err);
     });
 } catch (e) {

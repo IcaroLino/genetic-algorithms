@@ -2,7 +2,7 @@ import mutationType from '../enum/mutationType';
 import ObjectiveFnInterface from '../interfaces/ObjectiveFunction';
 import Individual from './Individual';
 
-export default class Group {
+export default class Population {
 
     private _group: Individual[];
     private _groupLog: string[][] = [];
@@ -15,17 +15,17 @@ export default class Group {
     private static _mutationType: mutationType;
     private static _mutationRate: number;
 
-    constructor(groupLength: number, dimensions: number, individualLength: number, generations: number) {
-        Individual.setGroupParams(
-            Group._objectiveFunction,
-            Group._minPosition,
-            Group._maxPosition,
-            Group._decimalPrecision,
-            Group._mutationType,
-            Group._mutationRate
+    constructor(populationLength: number, dimensions: number, individualLength: number, generations: number) {
+        Individual.setPopulationParams(
+            Population._objectiveFunction,
+            Population._minPosition,
+            Population._maxPosition,
+            Population._decimalPrecision,
+            Population._mutationType,
+            Population._mutationRate
         );
 
-        this._group = new Array(groupLength).fill(undefined).map(() => new Individual(dimensions, individualLength));
+        this._group = new Array(populationLength).fill(undefined).map(() => new Individual(dimensions, individualLength));
         this._groupLog.push(this._group.map((individual) => JSON.stringify(individual)));
         this._metrics.push(this.getMetrics());
 
@@ -60,7 +60,7 @@ export default class Group {
         return this._group.map((individual) => (individual.objectiveValue + factor) / total);
     }
 
-    private selectParents(probabilitiesArray: number[], group: number[][][]): number[][] {
+    private selectParents(probabilitiesArray: number[], positionArray: number[][][]): number[][] {
         const parentDrawn = Math.random();
         let probabilityValue = 0;
         let selectedIndex = probabilitiesArray.length - 1;
@@ -72,7 +72,7 @@ export default class Group {
                 break;
             }
         }
-        return group[selectedIndex];
+        return positionArray[selectedIndex];
     }
 
     private getMetrics(): { highestValue: number; average: number, position: number[] } {
@@ -105,7 +105,7 @@ export default class Group {
         });
     }
 
-    public static setGroupParams(
+    public static setPopulationParams(
         objectiveFn: ObjectiveFnInterface,
         minPosition: number[],
         maxPosition: number[],
@@ -113,11 +113,11 @@ export default class Group {
         mutationType: mutationType,
         mutationRate: number
     ) {
-        Group._objectiveFunction = objectiveFn;
-        Group._minPosition = minPosition;
-        Group._maxPosition = maxPosition;
-        Group._decimalPrecision = decimalPrecision;
-        Group._mutationType = mutationType;
-        Group._mutationRate = mutationRate;
+        Population._objectiveFunction = objectiveFn;
+        Population._minPosition = minPosition;
+        Population._maxPosition = maxPosition;
+        Population._decimalPrecision = decimalPrecision;
+        Population._mutationType = mutationType;
+        Population._mutationRate = mutationRate;
     }
 }
