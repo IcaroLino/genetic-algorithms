@@ -60,6 +60,14 @@ export default class Individual {
         this._objectiveValue = Individual._objectiveFunction.objectiveFunction(...this._position);
     }
 
+    public get binaryPosition() {
+        return this._binaryPosition;
+    }
+
+    public get objectiveValue() {
+        return this._objectiveValue;
+    }
+
     public static setGroupParams(objectiveFn: ObjectiveFnInterface, minPosition: number[], maxPosition: number[], decimalPrecision: number) {
         Individual._objectiveFunction = objectiveFn;
         Individual._minPosition = minPosition;
